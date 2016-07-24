@@ -1,0 +1,287 @@
+四、子查询
+1）数据准备
+
+-- 创建数据表
+
+  CREATE TABLE IF NOT EXISTS tdb_goods(
+    goods_id    SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    goods_name  VARCHAR(150) NOT NULL,
+    goods_cate  VARCHAR(40)  NOT NULL,
+    brand_name  VARCHAR(40)  NOT NULL,
+    goods_price DECIMAL(15,3) UNSIGNED NOT NULL DEFAULT 0,
+    is_show     BOOLEAN NOT NULL DEFAULT 1,
+    is_saleoff  BOOLEAN NOT NULL DEFAULT 0
+  );
+
+ -- 写入记录
+
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('R510VC 15.6英寸笔记本','笔记本','华硕','3399',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('Y400N 14.0英寸笔记本电脑','笔记本','联想','4899',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('G150TH 15.6英寸游戏本','游戏本','雷神','8499',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('X550CC 15.6英寸笔记本','笔记本','华硕','2799',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('X240(20ALA0EYCD) 12.5英寸超极本','超级本','联想','4999',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('U330P 13.3英寸超极本','超级本','联想','4299',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('SVP13226SCB 13.3英寸触控超极本','超级本','索尼','7999',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('iPad mini MD531CH/A 7.9英寸平板电脑','平板电脑','苹果','1998',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('iPad Air MD788CH/A 9.7英寸平板电脑 （16G WiFi版）','平板电脑','苹果','3388',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES(' iPad mini ME279CH/A 配备 Retina 显示屏 7.9英寸平板电脑 （16G WiFi版）','平板电脑','苹果','2788',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('IdeaCentre C340 20英寸一体电脑 ','台式机','联想','3499',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('Vostro 3800-R1206 台式电脑','台式机','戴尔','2899',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('iMac ME086CH/A 21.5英寸一体电脑','台式机','苹果','9188',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('AT7-7414LP 台式电脑 （i5-3450四核 4G 500G 2G独显 DVD 键鼠 Linux ）','台式机','宏碁','3699',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('Z220SFF F4F06PA工作站','服务器/工作站','惠普','4288',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('PowerEdge T110 II服务器','服务器/工作站','戴尔','5388',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('Mac Pro MD878CH/A 专业级台式电脑','服务器/工作站','苹果','28888',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES(' HMZ-T3W 头戴显示设备','笔记本配件','索尼','6999',DEFAULT,DEFAULT);
+
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('商务双肩背包','笔记本配件','索尼','99',DEFAULT,DEFAULT);
+
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('X3250 M4机架式服务器 2583i14','服务器/工作站','IBM','6888',DEFAULT,DEFAULT);
+ 
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('玄龙精英版 笔记本散热器','笔记本配件','九州风神','',DEFAULT,DEFAULT);
+
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES(' HMZ-T3W 头戴显示设备','笔记本配件','索尼','6999',DEFAULT,DEFAULT);
+
+ INSERT tdb_goods (goods_name,goods_cate,brand_name,goods_price,is_show,is_saleoff) VALUES('商务双肩背包','笔记本配件','索尼','99',DEFAULT,DEFAULT);
+
+2) 子查询（Subquery)
+- 是指出现在其他SQL语句内的SELECT子句
+例如： 
+SELECT * FROM t1 WHERE col1 = (SELECT col2 FROM t2);
+SELECT * FROM t1 - Outer Query/Outer Statement
+SELECT col2 FROM t2, 称为SubQuery子查询
+
+- 子查询是嵌套在外查询内部。而事实上它有可能在子查询内部再嵌套子查询。子查询必须出现在圆括号之间。
+- 子查询可以包含多个关键字或条件, 如DISTINCT， GROUP BY， ORDER BY， LIMIT，函数等。
+- 子查询的外层查询可以是： SELECT， INSERT， UPDATE， SET或DO。
+
+3）子查询的返回值
+- 可以返回标量、一行、一列或子查询。被其他SQL语句来使用。
+
+4）第一种子查询：使用比较运算符的子查询
+- = > < >= <= <> != <=>
+- 语法结构： operand comparison_operator subquery
+
+-- 查找商品的平均价格， AVG是聚合函数，只有一个返回值
+-- ROUND是四舍五入函数，保留到小数点后两位
+SELECT AVG(goods_price) FROM tdb_goods;
+SELECT ROUND(AVG(goods_price),2) FROM tdb_goods;
+
+-- 查询哪些商品的价格大于平均价格
+SELECT goods_id, goods_name, goods_price FROM tdb_goods WHERE goods_price > (SELECT ROUND(AVG(goods_price),2) FROM tdb_goods);
+
+5) ANY，SOME或者ALL修饰的比较运算符
+operand comparison_operator ANY (subquery)
+operand comparison_operator SOME (subquery)
+operand comparison_operator ALL (subquery)
+
+-- 查询比任何超级本贵的商品的价格
+SELECT goods_name, goods_price FROM tdb_goods WHERE goods_price > ANY (SELECT goods_price FROM tdb_goods WHERE goods_cate='超级本');
+
+-- 查询比所有超级本贵的商品的价格
+SELECT goods_name, goods_price FROM tdb_goods WHERE goods_price > ALL (SELECT goods_price FROM tdb_goods WHERE goods_cate='超级本');
+
+-- 查询与任何超级本价格一样的商品的价格
+SELECT goods_name, goods_price FROM tdb_goods WHERE goods_price = ANY (SELECT goods_price FROM tdb_goods WHERE goods_cate='超级本');
+
+6）第二种子查询：使用【NOT] IN的子查询
+语法结构：operand comparison_operator [NOT] IN (subquery)
+=ANY 运算符与IN等效。
+!=ALL或<>ALL运算符与NOT IN等效。
+
+-- 查询与任何超级本价格不一样的商品的价格
+SELECT goods_name, goods_price FROM tdb_goods WHERE goods_price !=ALL (SELECT goods_price FROM tdb_goods WHERE goods_cate='超级本');
+
+-- !=ALL 等价于 NOT IN
+SELECT goods_name, goods_price FROM tdb_goods WHERE goods_price NOT IN (SELECT goods_price FROM tdb_goods WHERE goods_cate='超级本');
+
+-- 查询与任何超级本价格一样的商品的价格, =ANY 等价于 IN
+SELECT goods_name, goods_price FROM tdb_goods WHERE goods_price IN (SELECT goods_price FROM tdb_goods WHERE goods_cate='超级本');
+
+7) INSERT...SELECT 将查询结果写入数据表
+INSERT [INTO] tbl_name [(col_name,...)] SELECT ...
+
+-- 创建产品类别表
+CREATE TABLE IF NOT EXISTS tdb_goods_cates (
+  cate_id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  cate_name VARCHAR(40) NOT NULL
+);
+
+-- 查找tdb_goods中的分类并插入到产品类别表
+INSERT tdb_goods_cates (cate_name) SELECT goods_cate FROM tdb_goods GROUP BY goods_cate;
+
+8）多表更新
+UPDATE table_references
+SET col_name1={expr1|DEFAULT}
+[, col_name2={expr2|DEFAULT}] ...
+[WHERE where_condition]
+
+-- 参照产品分类表更新产品表, 使用内连接
+UPDATE tdb_goods INNER JOIN tdb_goods_cates ON goods_cate = cate_name SET goods_cate = cate_id;  
+
+9) CREATE...SELECT 
+创建数据表同时将查询结果写入到数据表
+CREATE TABLE [IF NOT EXISTS] tbl_name [(create_definition,...)] select_statement
+
+-- 一步创建品牌表同时插入数据
+CREATE TABLE tdb_goods_brands (
+  brand_id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  brand_name VARCHAR(40) NOT NULL 
+) 
+SELECT brand_name FROM tdb_goods GROUP BY brand_name;
+
+-- 参照品牌表更新商品表
+UPDATE tdb_goods AS g INNER JOIN tdb_goods_brands AS b ON g.brand_name=b.brand_name SET g.brand_name=b.brand_id;
+
+-- 修改goods_cate和brand_name字段名和定义, 不影响原有记录字段值
+ALTER TABLE tdb_goods 
+CHANGE goods_cate cate_id SMALLINT UNSIGNED NOT NULL,
+CHANGE brand_name brand_id SMALLINT UNSIGNED NOT NULL; 
+
+***********************************************************************
+一般情况下不去对cate_id和brand_id设置FK物理外键，而是采用“事实外键”的形式
+***********************************************************************
+
+六、连接 
+
+1) 数据准备
+
+-- 分别在tdb_goods_cates和tdb_goods_brands表插入记录
+   INSERT tdb_goods_cates(cate_name) VALUES('路由器'),('交换机'),('网卡');
+   INSERT tdb_goods_brands(brand_name) VALUES('海尔'),('清华同方'),('神舟');
+
+-- 在tdb_goods数据表写入任意记录, 注意这条记录的cate_id=12在tdb_goods_cates表中是没有对应记录的
+   INSERT tdb_goods(goods_name,cate_id,brand_id,goods_price) VALUES(' LaserJet Pro P1606dn 黑白激光打印机','12','4','1849');
+
+2）连接语法结构
+- MySQL在SELECT语句、多表更新、多表删除语句中支持JOIN操作。
+
+- 一个条件On，两张表，三种类型（内连接，左外连接，右外连接）
+table_reference
+{[INNER]|CROSS} JOIN | {LEFT|RIGHT} [OUTER] JOIN}
+table_reference
+ON conditional_expr
+
+table_reference 数据表参照
+- tbl_name [[AS] alias] table subquery [AS] alias
+- 数据表可以使用tbl_name AS alias_name或tbl_name alias_name赋予别名。
+- table_subquery可以作为子查询使用在FROM子句中，这样的子查询必须为其赋予别名。
+
+连接类型
+- INNER JOIN：内连接，在MySQL中,JOIN,CROSS JOIN和INNER JOIN是等价的
+- LEFT [OUTER] JOIN, 左外连接
+- RIGHT [OUTER] JOIN, 右外连接
+
+连接条件
+- 使用ON关键字来设定连接条件，也可以用WHERE来代替。
+- 通常使用ON关键字来设定连接条件，使用WHERE进行结果集记录的过滤。
+
+内连接 INNER JOIN
+- 显示左表及右表符合连接条件的记录（交集）
+
+-- INNER JOIN tdb_goods 和 tdb_goods_cates, 返回22条记录
+-- tdb_goods中cate_id在tdb_goods_cates中没有对应值的不返回
+-- 类别表中的路由器等记录的cate_id在商品表中也没有对应值，因此不返回
+SELECT goods_id, goods_name, cate_name FROM tdb_goods INNER JOIN tdb_goods_cates ON tdb_goods.cate_id = tdb_goods_cates.cate_id;
+
+左外连接 LEFT JOIN
+-显示左表的全部记录及右表符合连接条件的记录
+- 语法：A LEFT JOIN B join_condition
+- 数据表B的结果集依赖数据表A。
+- 数据表A的结果集根据左连接条件依赖所有数据表（B表除外）。
+- 左外连接条件决定如何检索数据表B（在没有指定WHERE条件的情况下）。
+- 如果数据表A的某条记录符合WHERE条件，但是数据表B不存在符合连接条件的记录，将生成一个所有列为空的额外的B行。
+- 如果使用内连接查找的记录在连接数据表中不存在，并且在WHERE子句中尝试以下操作：col_name IS NULL时，如果col_name被定义为NOT NULL, MySQL将在找到符合连接条件的记录后停止搜索更多的行。
+
+
+-- LEFT JOIN tdb_goods 和 tdb_goods_cates, 返回23条记录
+-- 包括左表tdb_goods的全部记录，以及右表tdb_goods_cates符合连接条件的记录
+-- 类别表中的路由器等记录的cate_id在商品表中也没有对应值，因此不返回
+SELECT goods_id, goods_name, cate_name FROM tdb_goods LEFT JOIN tdb_goods_cates ON tdb_goods.cate_id = tdb_goods_cates.cate_id;
+
+右外连接 RIGHT JOIN
+显示右表的全部记录及左表符合连接条件的记录
+
+-- RIGHT JOIN tdb_goods 和 tdb_goods_cates, 返回25条记录
+-- 包括右表tdb_goods_cates全部记录，以及左表tdb_goods符合连接条件的记录
+-- 类别表中的路由器等记录也返回了
+SELECT goods_id, goods_name, cate_name FROM tdb_goods RIGHT JOIN tdb_goods_cates ON tdb_goods.cate_id = tdb_goods_cates.cate_id;
+
+*********************************************************************
+三种连接中内连接用的相对多一些
+*********************************************************************
+
+3）多表连接 SELECT...INNER JOIN...INNER JOIN
+SELECT goods_id, goods_name, cate_name, brand_name FROM tdb_goods AS g INNER JOIN tdb_goods_cates AS c ON g.cate_id = c.cate_id
+INNER JOIN tdb_goods_brands AS b ON g.brand_id=b.brand_id\G;
+
+**********************************************************************
+连接是外键的逆向操作，外键把表分成多张，连接把表联系在一起。
+**********************************************************************
+
+4）无限级分类表设计
+
+-- 无限分类的数据表设计
+CREATE TABLE tdb_goods_types(
+  type_id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  type_name VARCHAR(20) NOT NULL,
+  parent_id SMALLINT UNSIGNED NOT NULL DEFAULT 0
+);
+
+-- 插入测试记录
+INSERT tdb_goods_types(type_name,parent_id) VALUES('家用电器',DEFAULT);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('电脑、办公',DEFAULT);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('大家电',1);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('生活电器',1);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('平板电视',3);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('空调',3);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('电风扇',4);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('饮水机',4);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('电脑整机',2);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('电脑配件',2);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('笔记本',9);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('超级本',9);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('游戏本',9);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('CPU',10);
+  INSERT tdb_goods_types(type_name,parent_id) VALUES('主机',10);
+
+自身连接
+- 同一个数据表对其自身进行连接(要想象有两张相同表用不同别名去连接)
+
+-- 查询子类型及其相应的父类型
+SELECT s.type_id, s.type_name, p.type_name from tdb_goods_types AS s LEFT JOIN tdb_goods_types AS p ON s.parent_id = p.type_id;
+
+-- 查询父类型及其相应的子类型
+SELECT p.type_id, p.type_name, s.type_name FROM tdb_goods_types AS p
+LEFT JOIN tdb_goods_types AS s ON p.type_id = s.parent_id; 
+
+-- 查询父类型及其相应的子类型的数量
+SELECT p.type_id, p.type_name, count(s.type_name) AS child_count FROM tdb_goods_types AS p
+LEFT JOIN tdb_goods_types AS s ON p.type_id = s.parent_id GROUP BY p.type_name ORDER BY p.type_id; 
+
+5）多表删除
+
+-- 查找tdb_goods中重复记录
+SELECT goods_id, goods_name FROM tdb_goods GROUP BY goods_name HAVING count(goods_name) > 1;
+
+-- 删除tdb_goods中的重复记录
+DELETE t1 FROM tdb_goods AS t1 
+INNER JOIN (SELECT goods_id, goods_name FROM tdb_goods GROUP BY goods_name HAVING count(goods_name) > 1) AS t2 
+ON t1.goods_name=t2.goods_name WHERE t1.goods_id > t2.goods_id; 

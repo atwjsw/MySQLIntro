@@ -1,0 +1,82 @@
+第七章 自定义函数
+
+1）自定义函数
+- 用户自定义函数（user-defined function, UDF)是一种对MySQL扩展的途径，其用法与内置函数相同。
+
+- 自定义函数的两个必要条件：参数和返回值
+- 函数可以返回任意类型的值，同样可以接收这些类型的参数
+- 参数数量不能超过1024个
+
+2）创建自定义函数
+CREATE FUNCTION function_name 
+RETRUNS
+{STRING|INTEGER|REAL|DECIMAL}
+routine_body
+
+函数体 routine_body
+- 函数体有合法的SQL语句构成
+- 可以是简单的SELECT和INSERT语句
+- 如果是符合结构则使用BEGIN...END语句
+- 复合结构可以包含声明，循环，控制结构
+
+3) 不带参数的自定义函数
+
+-- 创建汉字日期函数
+SELECT DATE_FORMAT(NOW(), '%Y年%m月%日 %H点:%i分:%s秒');
+
+CREATE FUNCTION f1() 
+RETURNS VARCHAR(30)
+RETURN DATE_FORMAT(NOW(), '%Y年%m月%d日 %H点:%i分:%s秒');
+
+SELECT f1(); 
+DROP FUNCTION f1;
+
+4) 创建带参数的自定义函数
+-- 求平均值
+CREATE FUNCTION f2(num1 SMALLINT UNSIGNED, num2 SMALLINT UNSIGNED)
+RETURNS FLOAT(10, 2) UNSIGNED
+RETURN (num1+num2)/2;
+
+SELECT f2(3,4); -- 3.5
+
+5）创建复合结构函数体的自定义函数
+
+-- 使;失效，以便写入多条独立的SQL语句
+DELIMITER //
+
+CREATE FUNCTION adduser(username VARCHAR(20))
+RETURNS INT UNSIGNED
+BEGIN
+INSERT test(username) VALUES(username);
+RETURN LAST_INSERT_ID();
+END
+
+SELECT adduser('Rose'); -- 4
+
+-- 改回;
+DELIMITER ;
+
+************************************************************
+自定义函数开发中用的不多
+************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,151 @@
+四、记录操作（增删改查）
+
+1) INSERT 插入记录
+- 第一种插入方法（标准的INSERT）：
+INSERT [INTO] tbl_name [(col_name,...)] {VALUES | VALUE} ({expr | DEFAULT},...), (...),...
+
+- 插入值可以是表达式或者缺省值
+- 可以一次插入多条记录
+
+-- 创建demo表users
+CREATE TABLE users (
+  id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(20) NOT NULL,
+  password VARCHAR(32) NOT NULL,
+  age TINYINT UNSIGNED NOT NULL DEFAULT 10,
+  sex BOOLEAN
+);
+
+-- 插入所有字段, 列与值数量需一致，自增字段可以用NULL或DEFAULT作为值
+INSERT users VALUES(NULL, 'Tom', 'tom123', 25, 1);
+INSERT users VALUES(DEFAULT, 'Tom', 'tom123', 20, 1);
+
+-- 使用表达式作为值
+INSERT users VALUES(NULL, 'Tom', 'tom123', 3*8+5, 1);
+
+-- 使用DEFAULT作为有默认值字段的输入值
+INSERT users VALUES(DEFAULT, 'Tom', 'tom123', DEFAULT, 1);
+
+-- 一次写入多条记录, 记录见用，分隔，使用函数md5作为值
+INSERT users VALUES
+(DEFAULT, 'Tom1', 'tom123', DEFAULT, 1),
+(DEFAULT, 'Tom2', 'tom123', 30, 1),
+(DEFAULT, 'Tom3', md5('tom123'), 40, 1);
+
+- 第二种插入方法： 
+INSERT [INTO] tbl_name SET col_name={expr | DEFAULT},...
+说明：与第一种方法的区别在于，此方法可以使用子查询（SubQuery)
+只能一次性插入一条记录
+
+INSERT users SET username="Ben", password='456';
+
+- 第三种插入方法：
+INSERT [INTO] tbl_name [(col_name,...)] SELECT ...
+说明：此方法可以将查询结果插入到指定数据表
+
+-- 创建一个测试表
+CREATE TABLE test(
+  id TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(20)
+);
+
+-- 把users表中age>30的记录的用户名写入到test表
+INSERT test(username) SELECT username FROM users WHERE age >= 30;
+
+2）UPDATE 更新记录
+
+- 第一种方式 （单表更新）
+UPDATE [LOW_PRIORIRY] [IGNORE] table_reference SET col_name1={expr1|DEFAULT} [, col_name2={expr2|DEFAULT}] ... [WHERE where_condition]
+
+-- 所有记录age+5
+UPDATE users SET age = age + 5;
+
+-- 同时更新两个字段
+UPDATE users SET age = age - id, sex = 0;
+
+-- 根据WHERE条件更新
+UPDATE users SET age = age + 10 WHERE id % 2 = 0;
+
+3) DELETE 删除记录
+
+- 第一种方法： 单表删除
+DELETE FROM tbl_name [WHERE where_condition]
+
+-- 删除id=6的记录
+DELETE FROM users WHERE id = 6;
+
+4）SELECT 查找记录 （占到操作的80%以上）
+SELECT select_expr [, select_expr ...]
+[
+  FROM table_references
+  [WHERE where_condition]
+  [GROUP BY {col_name | position} [ASC | DESC], ...]
+  [HAVING where_condition]
+  [ORDER BY {col_name | expr | position} [ASC | DESC], ...]
+  [LIMIT {[offset,] row_count | row_count OFFSET offset}]
+]
+
+-- 只有select_expr的查询语句
+SELECT VERSION();
+SELECT NOW();
+SELECT 3 + 5;
+
+查询表达式select_expr的说明：
+- 每一个表达式表示想要的一列，必须有至少一个；
+- 多个列之间以英文逗号分隔
+- 星号（*)表示所有列。 tbl_name.*可以表示命名表的所有列。
+- 查询表达式可以用[AS] alias_name为其赋予别名。
+- 别名可用于GROUP BY， ORDER BY或HAVING子句。
+
+-- 指定查询返回的列
+SELECT id, username FROM users;
+
+-- 查询返回的列的次序可以与原表列次序不同(影响结果集)
+SELECT username, id FROM users;
+
+-- 列前面可以加表名，多表连接查询时如果列名一样，则需要用表名区分
+SELECT users.id, users.username FROM users;
+
+-- 使用别名，字段名称过长不容易理解时，可以给列赋别名(影响结果集)
+SELECT id AS userid, username AS uname FROM users;
+
+WHERE条件表达式的说明
+- 对记录进行过滤，如果没有指定WHERE子句，则显示所有记录。
+- 在WHERE表达式中，可以使用MySQL支持的函数或运算符。
+
+GROUP BY 查询结果分组
+[GROUP BY {col_name|position} [ASC | DESC], ...]
+
+-- 安装username分组
+SELECT username FROM users GROUP BY username;
+
+HAVING 分组条件
+[HAVING where_condition]
+
+-- 对部分记录进行分组
+SELECT username FROM users GROUP BY username HAVING age > 30;
+
+-- 采用聚合函数对部分记录进行分组: 记录分组后，组记录数量大于2的username
+SELECT username FROM users GROUP BY username HAVING count(id) > 2;
+
+ORDER BY 对查询结果进行排序
+
+-- 降序排序
+SELECT * FROM users ORDER BY id DESC;
+
+-- 多字段排序, 如果username都不同，则以下两条语句返回的结果相同
+-- 否则，会在对username排序的基础上，相同的username再安装id排序
+SELECT * FROM users ORDER BY username;
+SELECT * FROM users ORDER BY username, id DESC;
+
+LIMIT 限制查询结果返回的数量 (可实现分页效果)
+[LIMIT {[offset,] row_count | row_count OFFSET offset}]
+
+-- 只返回两条记录，默认从第一条开始
+SELECT * FROM users LIMIT 2;
+
+-- 返回两条记录，从第三条开始（返回记录数从0开始算）
+SELECT * FROM users LIMIT 2,2;
+
+-- 记录的位置是以返回的结果集为参照
+SELECT * FROM users ORDER BY id DESC LIMIT 2,2;

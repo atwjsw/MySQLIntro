@@ -1,0 +1,118 @@
+三、数据类型
+
+数据类型是指列、存储过程参数、表达式和局部变量的数据特征，它决定了数据的存储格式，代表了不同的信息类型。
+
+1）整形
+TINYINT  255  占用1Byte、年龄
+SMALLINT 65535  占用2Byte
+INT 16777215    占用3Byte
+MEDIUMINT 4294967295  占用4Byte
+BIGINT 18446744073709551615 占用8Byte
+
+有符号位 Vs. 无符号位
+有符号位一位这最高位存储0-1表示正负数，所有剩下的数字能表示的绝对范围就小了
+选择合适的数据类型，够用就好。
+
+2）浮点型
+单精度浮点 
+FLOAT[(M,D)]
+
+双精度浮点
+DOUBLE[(M,D)]
+
+一般用FLOAT就够用了
+
+3）日期时间型
+类型      存储需求  范围
+YEAR      1         1000-9999
+TIME      3         -8385959-8385959
+DATE      3         1000-01-01 to 9999-12-31
+DATETIME  8         1000-01-01：00：00：00 to 9999-12-31：23：59：59   
+TIMSTAMP  4         1970-01-01 to 2037-12-31间的毫秒值
+
+由于跨时区的原因，实际开发中一般比较少用日期时间型，而采用数字类型保存时间戳。
+
+4）字符型
+CHAR（M)       M个字节， 0<=M<=255 （定长）
+VARCHAR(M)     L+1个字节，其中L<=M且0<=M<=65535
+TINYTEXT       L+1个字节, 其中L <2^8
+TEXT           2^16
+MEDIUMTEXT     2^24
+LONGTEXT       2^32
+ENUM('value1','value2',...) 1或2个字节，取决于枚举值的个数（最多65535个值）
+
+5）SET('value1','value2',...)  1、2、3、4或者8个字节，取决于set成员的数目（最多64个成员）
+
+4）数据表
+数据表是数据库最重要的组成部分之一，是其他对象的基础。
+
+USE test;
+SELECT DATABASE();
+
+-- 创建数据表
+CREATE TABLE [IF NOT EXISTS] table_name (
+  column_name data_type,
+  ...
+)
+
+// 显示数据表
+SHOW TABLES [FROM db_name] [LIKE 'pattern' | WHERE expr]
+
+// 显示表结构
+SHOW COLUMNS FROM [tbl_name]
+
+5) 插入记录
+INSERT [INTO] tbl_name [(col_name,...)] VALUES(val,...)
+
+6）查询记录
+SELECT　expr,... FROM tbl_name
+
+7) 空值与非空
+NULL vs. NOT NULL
+
+CREATE TABLE tb2 (
+  username VARCHAR(20) NOT NULL;
+  age TINYINT UNSIGNED NULL;
+);
+
+8) 自动编号 AUTO_INCREMENT
+- 保证字段的唯一性
+- 自动编号，必须与主键组合使用
+- 默认情况下，起始值为1，每次增量为1
+
+CREATE TABLE tb3(
+  id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(30) NOT NULL
+);
+
+9) 主键 PRIMARY KEY
+- 主键约束 （保证记录的唯一性）
+- 每张数据表只能存在一个主键
+- 主键保证记录的唯一性
+- 主键自动为NOT NULL
+
+CREATE TABLE tb4(
+  id SMALLINT UNSIGNED PRIMARY KEY,
+  username VARCHAR(30) NOT NULL
+);
+
+10) 唯一键 UNIQUE KEY
+- 唯一约束
+- 唯一约束可以保证记录的唯一性
+- 唯一约束的字段可以为空值（NULL)
+- 每张表可以存在多个唯一约束
+
+CREATE TABLE tb5 (
+  id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(20) NOT NULL UNIQUE KEY,
+  age TINYINT UNSIGNED
+);
+
+11) 默认值 DEFAULT
+当插入记录时，如果没有明确为字段赋值，则自动赋予默认值
+
+CREATE TABLE tb6 (
+  id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(20) NOT NULL UNIQUE KEY,
+  sex enum('1','2','3') DEFAULT '3' -- 男，女，保密，默认保密 
+);
